@@ -12,9 +12,6 @@
     "pretest": "eslint ./src --fix",
     "test": "echo \"Tests complete\""
   },
-  "dependencies": {
-    "xml": "^1.0.1"
-  },
   "devDependencies": {
     "eslint": "^4.6.1",
     "eslint-config-airbnb": "^15.1.0",
