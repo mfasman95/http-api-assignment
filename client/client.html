@@ -6,7 +6,60 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
+    const selection = {
+      url: '/success',
+      accepts: 'application/json',
+    }
 
+    const handleResponse = (xhr) => {
+      const content = document.querySelector("#content");
+      const { status } = xhr;
+      
+      if(xhr.responseXML){
+        console.dir('Displaying XML response for grader...');
+        console.dir(xhr.responseXML);
+        const responseData = xhr.responseXML.children[0].children;
+        const message = responseData[0].textContent;
+        const id = responseData[1].textContent;
+        content.innerHTML = `
+          <div>
+            <h2>${status}: ${id || 'No Response ID'}</h2>
+            <p>${message || 'No Response Message'}</p>
+          </div>
+        `;
+      } else {
+        const obj = JSON.parse(xhr.response);
+        console.dir('Displaying JSON response for grader...');
+        console.dir(obj);
+        const { id, message } = obj;
+        content.innerHTML = `
+          <div>
+            <h2>${status}: ${id || 'No Response ID'}</h2>
+            <p>${message || 'No Response Message'}</p>
+          </div>
+        `;
+      }
+    };
+
+    const sendAjax = () => {
+      const { url, accepts } = selection;
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.setRequestHeader ('Accept', accepts);
+      xhr.onload = () => handleResponse(xhr);
+      xhr.send();
+    };
+
+    const init = () => {
+      const pageSelector = document.querySelector('#page');
+      const typeSelector = document.querySelector('#type');
+      const sendButton = document.querySelector('#send');
+
+      pageSelector.addEventListener('change', e => selection.url = e.target.value);
+      typeSelector.addEventListener('change', e => selection.accepts = e.target.value);
+      sendButton.addEventListener('click', sendAjax);
+    };
+    window.onload = init;
   </script>
 </head>
 <body>
